@@ -82,29 +82,21 @@ def create_project():
     return
 
 # Get project 
-def get_project():
-    url= BASE_URL + "/dna/intent/api/v1/template-programmer/project"
+def get_project_data(project_name):
+    url= BASE_URL + "/dna/intent/api/v1/template-programmer/project?name=" + str(project_name)
 
     headers = {
         "Content-Type" : "application/json",
         "X-Auth-Token" : token
     }
 
-    resp = requests.get(url=url, headers=headers, verify=False)
-    data = resp.json()
-    return data
+    response = requests.get(url=url, headers=headers, verify=False)
+    if response.status_code == 200:
+        responseData = response.json()
+    else:
+        print(response.status_code)
+    return 
 
-# Verify project
-def verify_project(project_name):
-    projectsData = get_project()
-
-    for item in projectsData:
-        if item["name"] == project_name:
-            templates = item["templates"]
-            break
-        else: 
-            print("No Project named {}".format(project_name))
-    return templates
 
 def get_template_UUID(name_of_template):
     projectsData = get_project()
@@ -289,5 +281,6 @@ if __name__ == "__main__":
     # update_template()
     # create_template_version()
     # get_template_version_ID("CL22_template2","3")
-    tag_name = "CSCL22_template2"
-    print(get_tagID(tag_name))
+    # tag_name = "CSCL22_template2"
+    # print(get_tagID(tag_name))
+    pprint(get_projectUUID())
