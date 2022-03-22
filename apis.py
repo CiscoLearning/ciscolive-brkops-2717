@@ -31,6 +31,25 @@ def get_auth_token():
 
 token = get_auth_token()
 
+# Get TAGID
+
+def get_tagID(tag_name):
+    url = BASE_URL + "/dna/intent/api/v1/tag?name=" + str(tag_name)
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : get_auth_token()
+    }
+    response = requests.get(url=url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        responseData = response.json()
+        tagID = responseData["response"][0]["id"]
+    else: 
+        print(response.status_code)
+
+    return tagID
+
+# Create project
 def create_project():
     url = BASE_URL + "/dna/intent/api/v1/template-programmer/project"
     headers = {
@@ -270,5 +289,5 @@ if __name__ == "__main__":
     # update_template()
     # create_template_version()
     # get_template_version_ID("CL22_template2","3")
-
-    pprint(data)
+    tag_name = "CSCL22_template2"
+    print(get_tagID(tag_name))

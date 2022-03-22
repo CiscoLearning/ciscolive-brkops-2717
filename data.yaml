@@ -7,6 +7,7 @@ credentials:
         url: dnac-sda.ciscolab.dk
         username: admin
         password: Wert432!
+        tag: CSCL22_template2
 
 host:
     platform: ios-xe
