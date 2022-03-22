@@ -1,0 +1,14 @@
+
+credentials:
+    ios-xe:
+        username: sedk
+        password: Wert432!
+    dnac: 
+        url: dnac-sda.ciscolab.dk
+        username: admin
+        password: Wert432!
+
+host:
+    platform: ios-xe
+    serialNr: FCW2146G09E
+    hostName : CL22.ciscolab.dk

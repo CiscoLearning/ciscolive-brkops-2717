@@ -1,0 +1,14 @@
+---
+  configuration: 
+    version: 1
+    vlans: 
+    -
+      vlan100:
+        id: 100
+        name: VLAN100
+      vlan200: 
+        id: 200
+        name: VLAN200
+      vlan300: 
+        id: 300
+        name: VLAN300

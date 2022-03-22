@@ -1,0 +1,274 @@
+import yaml 
+from yaml.loader import SafeLoader
+import dnacentersdk
+from pprint import pprint
+import json
+import requests
+from requests.auth import HTTPBasicAuth
+import urllib3
+
+urllib3.disable_warnings()
+
+# Load data
+with open('data.yaml') as f:
+    data = yaml.load(f, Loader=SafeLoader)
+
+# Load configuration
+with open('configuration.yaml') as f:
+    configuration= yaml.load(f, Loader=SafeLoader)
+
+BASE_URL = "https://{}".format(data["credentials"]["dnac"]["url"])  
+
+# Get authentication token
+def get_auth_token():
+    """
+    Building out Auth request. Using requests.post to make a call to the Auth Endpoint
+    """
+    url = BASE_URL + '/dna/system/api/v1/auth/token'    
+    resp = requests.post(url, auth=HTTPBasicAuth(data["credentials"]["dnac"]["username"], data["credentials"]["dnac"]["password"]), verify=False)  # Make the POST Request
+    token = resp.json()['Token']     
+    return token    
+
+token = get_auth_token()
+
+def create_project():
+    url = BASE_URL + "/dna/intent/api/v1/template-programmer/project"
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : get_auth_token()
+    }
+
+    payload = {
+        
+        "tags": [
+            {
+                "id": "string",
+                "name": "string"
+            }
+        ],
+        "createTime": "integer",
+        "description": "string",
+        "id": "string",
+        "lastUpdateTime": "integer",
+        "name": "string",
+        "templates": "any"
+
+    }
+
+    response = requests.post(url=url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        responseData = response.json()
+        pprint(responseData)
+    return
+
+# Get project 
+def get_project():
+    url= BASE_URL + "/dna/intent/api/v1/template-programmer/project"
+
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : token
+    }
+
+    resp = requests.get(url=url, headers=headers, verify=False)
+    data = resp.json()
+    return data
+
+# Verify project
+def verify_project(project_name):
+    projectsData = get_project()
+
+    for item in projectsData:
+        if item["name"] == project_name:
+            templates = item["templates"]
+            break
+        else: 
+            print("No Project named {}".format(project_name))
+    return templates
+
+def get_template_UUID(name_of_template):
+    projectsData = get_project()
+    for item in projectsData:
+            if item["name"] == "CL22":
+                templates = item["templates"]
+                for item in templates:
+                    if item["name"] == str(name_of_template):
+                        template_UUID = item["id"]
+                        break
+    return template_UUID
+
+
+def get_deviceUUID_by_serial(serial_number):
+
+    url = BASE_URL + "/dna/intent/api/v1/network-device/serial-number/" + serial_number
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : token
+    }   
+    resp = requests.get(url=url, headers=headers, verify=False)
+    data = resp.json()
+    device_UUID = data["response"]["id"]
+    return device_UUID
+
+
+
+def update_template():
+    url = BASE_URL + "/dna/intent/api/v1/template-programmer/template"
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : token
+    }     
+
+    payload = {
+
+        "deviceTypes": [
+            {
+                "productFamily": "Switches and Hubs"
+            }
+        ],
+        "language": "VELOCITY",
+        "name": "CL22_template2",
+        "projectName": "CL22",
+        "softwareType": "IOS-XE",
+        "templateContent": "no vlan 500\nno vlan 600",
+        "id" : "c7d9721b-7a73-4f44-8bd1-a2fbed3ecae6"
+        
+    }
+
+
+    resp = requests.put(url=url, headers=headers, verify=False, data= json.dumps(payload))
+    print(resp.status_code)
+    data = resp.json()
+    pprint(data)
+
+    return 
+
+# COMMIT TEMPLATE VERSION
+def create_template_version(template_UUID):
+    url = BASE_URL + "/dna/intent/api/v1/template-programmer/template/version"
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : token
+    }
+
+    payload = {
+        "comments" : "test from Python",
+        "templateId" : template_UUID
+    }
+
+    resp = requests.post(url=url, headers=headers, verify=False, data= json.dumps(payload))
+
+    if resp.status_code == 202:
+        responseData = resp.json()
+        taskID = responseData["response"]["taskId"]
+        print(get_task_status(taskID))
+    else: 
+        print(resp.status_code)
+        print(resp.json())
+
+    return
+
+def get_template_version_ID(name_of_template,version):
+    TEMPLATE_UUID = get_template_UUID(name_of_template)
+    url = BASE_URL + "/dna/intent/api/v1/template-programmer/template/version/" + TEMPLATE_UUID
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : token
+    }
+
+    resp = requests.get(url = url, headers=headers, verify = False)
+
+    if resp.status_code == 200:
+        responseData = resp.json()
+        versionsInfo_list = responseData[0]["versionsInfo"]
+        versionsInfo_list.pop(0)
+
+        if version == "latest":
+            version_number = len(versionsInfo_list)
+
+            for item in versionsInfo_list:
+                if item["version"] == str(version_number):
+                    versionID = item["id"]
+                    print(versionID)
+                    break
+
+        else:
+            version_number = version
+
+            for item in versionsInfo_list:
+                if item["version"] == str(version_number):
+                    versionID = item["id"]
+                    print(versionID)
+                    break             
+
+    else:
+        pprint(response.json())
+
+    return versionID
+
+def deployment_of_template(serial_number, name_of_template):
+    url = BASE_URL + "/dna/intent/api/v2/template-programmer/template/deploy"
+
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : token
+    }
+
+    TEMPLATE_UUID = get_template_UUID(name_of_template)
+    TEMPLATE_VERSION_UUID = "test"
+    DEVICE_UUID = get_deviceUUID_by_serial(serial_number)
+
+    Data = {
+        "targetInfo" : [
+            {
+                "id" : DEVICE_UUID,
+                "type" : "MANAGED_DEVICE_UUID",
+                "versionedTemplateId": TEMPLATE_UUID
+            }
+        ],
+        "templateId" : TEMPLATE_UUID
+
+    }
+
+    response = requests.post(url=url, headers=headers, data=json.dumps(Data), verify=False)
+    
+    if response.status_code == 202:
+        responseData = response.json()
+        taskID = responseData["response"]["taskId"]
+        print(get_task_status(taskID))
+        print("DONE")
+    else:
+        print(response.status_code)
+        pprint(response.json())
+
+    return
+
+
+# GET TASK STATUS
+def get_task_status(taskID):
+    url = BASE_URL + "/dna/intent/api/v1/task/" + taskID
+    headers={
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : token
+    }
+
+    response = requests.get(url =url, headers=headers, verify=False)
+    print(response)
+
+    if response.status_code == 200:
+        responseData = response.json()
+        task_status = responseData["response"]["progress"]
+    return task_status
+
+
+if __name__ == "__main__":
+
+    # serial_number = data["devices"]["switches"][0]["switch_1"]["serialNr"]
+    # name_of_template = "CL22_template2"
+    # deployment_of_template(serial_number,name_of_template)
+    # update_template()
+    # create_template_version()
+    # get_template_version_ID("CL22_template2","3")
+
+    pprint(data)
