@@ -78,17 +78,11 @@ def main():
 
 
     else:
-        None
+        print("ERROR: Do not recognize command. You can only choose create or update")
 
     # Load data
     with open('data.yaml') as f:
         data = yaml.load(f, Loader=SafeLoader)
-
-
-
-
-
-
 
     #Load data from YAML file into Python dictionary
     config = yaml.safe_load(open('./configuration.yml'))
@@ -105,4 +99,6 @@ def main():
 
     return 
 
-main()
+if __name__ == "__main__":
+    main()
+
