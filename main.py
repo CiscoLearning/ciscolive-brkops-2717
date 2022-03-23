@@ -80,23 +80,6 @@ def main():
     else:
         print("ERROR: Do not recognize command. You can only choose create or update")
 
-    # Load data
-    with open('data.yaml') as f:
-        data = yaml.load(f, Loader=SafeLoader)
-
-    #Load data from YAML file into Python dictionary
-    config = yaml.safe_load(open('./configuration.yml'))
-
-    #Load Jinja2 template
-    env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
-    template = env.get_template('template.txt')
-
-    #Render template using data and print the output
-    template = template.render(config)
-
-
-    #apis.create_template("testfrompython4", "CL22", template)
-
     return 
 
 if __name__ == "__main__":
