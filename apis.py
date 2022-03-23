@@ -91,15 +91,22 @@ def get_project_data(project_name):
     }
 
     response = requests.get(url=url, headers=headers, verify=False)
+
     if response.status_code == 200:
         responseData = response.json()
     else:
         print(response.status_code)
-    return 
+        pprint(response.json())
+
+    return responseData
 
 
 def create_template(name_of_template, project_name):
-    url = BASE_URL + "/dna/intent/api/v1/template-programmer/project/d069bddd-565a-406c-838f-bf366a8284f0/template"
+
+    project_data = get_project_data(project_name)
+    projectUUID = project_data[0]["id"]
+
+    url = BASE_URL + "/dna/intent/api/v1/template-programmer/project/{}/template".format(projectUUID)
 
     headers = {
         "Content-Type" : "application/json",
@@ -317,5 +324,4 @@ if __name__ == "__main__":
     # name_of_template = "CL22_template2"
     # get_template_version_ID("CL22_template2","3")
     # tag_name = "CSCL22_template2"
-    # create_template("testfromPython","CL22")
-    pprint(get_project_data("CL22"))
+    create_template("testfromPython2","CL22")
