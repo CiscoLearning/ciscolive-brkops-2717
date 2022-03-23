@@ -14,7 +14,7 @@ with open('data.yaml') as f:
     data = yaml.load(f, Loader=SafeLoader)
 
 # Load configuration
-with open('configuration.yaml') as f:
+with open('configuration.yml') as f:
     configuration= yaml.load(f, Loader=SafeLoader)
 
 BASE_URL = "https://{}".format(data["credentials"]["dnac"]["url"])  
@@ -101,7 +101,7 @@ def get_project_data(project_name):
     return responseData
 
 
-def create_template(name_of_template, project_name):
+def create_template(name_of_template, project_name, template):
 
     project_data = get_project_data(project_name)
     projectUUID = project_data[0]["id"]
@@ -127,7 +127,7 @@ def create_template(name_of_template, project_name):
         "failurePolicy": "ABORT_ON_ERROR",
         "language": "JINJA",
         "name": name_of_template,
-        "templateContent": "!\nno vlan 500\nno vlan 600\n!",
+        "templateContent": template,
         "projectName": project_name,
         "softwareType": "IOS-XE",
 

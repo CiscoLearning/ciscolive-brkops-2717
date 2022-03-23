@@ -1,8 +1,6 @@
-!
-vlan 100
-    name VOICE
-vlan 200
-    name CORP
-vlan 300
-    name IOT
-!
+
+{% for vlan, name in vlans.items() %}
+vlan {{ vlan }}
+ name {{ name }}
+{% endfor -%}
+
