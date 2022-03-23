@@ -7,9 +7,13 @@ credentials:
         url: dnac-sda.ciscolab.dk
         username: admin
         password: Wert432!
-        tag: CSCL22_template2
 
 host:
-    platform: ios-xe
+    platform: IOS-XE
     serialNr: FCW2146G09E
     hostName : CL22.ciscolab.dk
+
+template: 
+    templateName: VLAN_segmentation_from_Python
+    projectName: CL22
+    tag: CSCL22_template2

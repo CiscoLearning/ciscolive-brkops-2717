@@ -29,8 +29,6 @@ def get_auth_token():
     token = resp.json()['Token']     
     return token    
 
-token = get_auth_token()
-
 # Get TAGID
 
 def get_tagID(tag_name):
@@ -87,7 +85,7 @@ def get_project_data(project_name):
 
     headers = {
         "Content-Type" : "application/json",
-        "X-Auth-Token" : token
+        "X-Auth-Token" : get_auth_token()
     }
 
     response = requests.get(url=url, headers=headers, verify=False)
@@ -105,6 +103,7 @@ def create_template(name_of_template, project_name, template):
 
     project_data = get_project_data(project_name)
     projectUUID = project_data[0]["id"]
+    tagName = data["template"]["tag"]
 
     url = BASE_URL + "/dna/intent/api/v1/template-programmer/project/{}/template".format(projectUUID)
 
@@ -115,10 +114,11 @@ def create_template(name_of_template, project_name, template):
     payload = {
         "tags": [
             {
-                "name": "CSCL22_template2"
+                "name": tagName,
+                "id" : get_tagID(tagName)
             }
          ],
-        
+
         "deviceTypes": [
             {
                 "productFamily": "Switches and Hubs",
@@ -132,19 +132,21 @@ def create_template(name_of_template, project_name, template):
         "softwareType": "IOS-XE",
 
         }
+    
     response = requests.post(url=url, headers=headers, data=json.dumps(payload), verify=False)
 
     if response.status_code == 202: 
         responseData = response.json()
-
+        taskID = responseData["response"]["taskId"]
     else: 
-        print(response.status_code)
-        pprint(response.json())
-    return
+        taskID = ""
+        responseData = response.json()
+        responseMessage = responseData["response"]["message"]
+    return response.status_code, taskID, responseMessage
 
 
 def get_template_UUID(name_of_template):
-    projectsData = get_project()
+    projectsData = get_project_data("CL22")
     for item in projectsData:
             if item["name"] == "CL22":
                 templates = item["templates"]
@@ -160,7 +162,7 @@ def get_deviceUUID_by_serial(serial_number):
     url = BASE_URL + "/dna/intent/api/v1/network-device/serial-number/" + serial_number
     headers = {
         "Content-Type" : "application/json",
-        "X-Auth-Token" : token
+        "X-Auth-Token" : get_auth_token()
     }   
     resp = requests.get(url=url, headers=headers, verify=False)
     data = resp.json()
@@ -173,7 +175,7 @@ def update_template():
     url = BASE_URL + "/dna/intent/api/v1/template-programmer/template"
     headers = {
         "Content-Type" : "application/json",
-        "X-Auth-Token" : token
+        "X-Auth-Token" : get_auth_token()
     }     
 
     payload = {
@@ -205,7 +207,7 @@ def create_template_version(template_UUID):
     url = BASE_URL + "/dna/intent/api/v1/template-programmer/template/version"
     headers = {
         "Content-Type" : "application/json",
-        "X-Auth-Token" : token
+        "X-Auth-Token" : get_auth_token()
     }
 
     payload = {
@@ -213,17 +215,17 @@ def create_template_version(template_UUID):
         "templateId" : template_UUID
     }
 
-    resp = requests.post(url=url, headers=headers, verify=False, data= json.dumps(payload))
+    response = requests.post(url=url, headers=headers, verify=False, data= json.dumps(payload))
 
-    if resp.status_code == 202:
-        responseData = resp.json()
+    if response.status_code == 202:
+        responseData = response.json()
         taskID = responseData["response"]["taskId"]
         print(get_task_status(taskID))
     else: 
-        print(resp.status_code)
-        print(resp.json())
+        print(response.status_code)
+        print(response.json())
 
-    return
+    return response.status_code, taskID
 
 def get_template_version_ID(name_of_template,version):
     TEMPLATE_UUID = get_template_UUID(name_of_template)
@@ -268,7 +270,7 @@ def deployment_of_template(serial_number, name_of_template):
 
     headers = {
         "Content-Type" : "application/json",
-        "X-Auth-Token" : token
+        "X-Auth-Token" : get_auth_token()
     }
 
     TEMPLATE_UUID = get_template_UUID(name_of_template)
@@ -306,7 +308,7 @@ def get_task_status(taskID):
     url = BASE_URL + "/dna/intent/api/v1/task/" + taskID
     headers={
         "Content-Type" : "application/json",
-        "X-Auth-Token" : token
+        "X-Auth-Token" : get_auth_token()
     }
 
     response = requests.get(url =url, headers=headers, verify=False)
@@ -319,9 +321,11 @@ def get_task_status(taskID):
 
 
 if __name__ == "__main__":
-
+    #token = get_auth_token()
     # serial_number = data["devices"]["switches"][0]["switch_1"]["serialNr"]
     # name_of_template = "CL22_template2"
     # get_template_version_ID("CL22_template2","3")
     # tag_name = "CSCL22_template2"
-    create_template("testfromPython2","CL22")
+    # create_template("testfromPython2","CL22")
+    pprint(data)
+    None
