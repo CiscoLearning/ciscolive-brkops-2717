@@ -98,6 +98,44 @@ def get_project_data(project_name):
     return 
 
 
+def create_template(name_of_template, project_name):
+    url = BASE_URL + "/dna/intent/api/v1/template-programmer/project/d069bddd-565a-406c-838f-bf366a8284f0/template"
+
+    headers = {
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : get_auth_token()
+    }
+    payload = {
+        "tags": [
+            {
+                "name": "CSCL22_template2"
+            }
+         ],
+        
+        "deviceTypes": [
+            {
+                "productFamily": "Switches and Hubs",
+            }
+        ],
+        "failurePolicy": "ABORT_ON_ERROR",
+        "language": "JINJA",
+        "name": name_of_template,
+        "templateContent": "!\nno vlan 500\nno vlan 600\n!",
+        "projectName": project_name,
+        "softwareType": "IOS-XE",
+
+        }
+    response = requests.post(url=url, headers=headers, data=json.dumps(payload), verify=False)
+
+    if response.status_code == 202: 
+        responseData = response.json()
+
+    else: 
+        print(response.status_code)
+        pprint(response.json())
+    return
+
+
 def get_template_UUID(name_of_template):
     projectsData = get_project()
     for item in projectsData:
@@ -277,10 +315,7 @@ if __name__ == "__main__":
 
     # serial_number = data["devices"]["switches"][0]["switch_1"]["serialNr"]
     # name_of_template = "CL22_template2"
-    # deployment_of_template(serial_number,name_of_template)
-    # update_template()
-    # create_template_version()
     # get_template_version_ID("CL22_template2","3")
     # tag_name = "CSCL22_template2"
-    # print(get_tagID(tag_name))
-    pprint(get_projectUUID())
+    # create_template("testfromPython","CL22")
+    pprint(get_project_data("CL22"))
