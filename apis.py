@@ -13,6 +13,7 @@ urllib3.disable_warnings()
 with open('data.yaml') as f:
     data = yaml.load(f, Loader=SafeLoader)
 
+
 # Load configuration
 with open('configuration.yml') as f:
     configuration= yaml.load(f, Loader=SafeLoader)
@@ -138,6 +139,7 @@ def create_template(name_of_template, project_name, template):
     if response.status_code == 202: 
         responseData = response.json()
         taskID = responseData["response"]["taskId"]
+        responseMessage = ""
     else: 
         taskID = ""
         responseData = response.json()
@@ -171,7 +173,15 @@ def get_deviceUUID_by_serial(serial_number):
 
 
 
-def update_template():
+def update_template(project_name, name_of_template,template):
+    with open('data.yaml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+    project_data = get_project_data(project_name)
+    projectUUID = project_data[0]["id"]
+    tagName = data["template"]["tag"]
+    template_UUID = get_template_UUID(name_of_template)
+    softwareType = data["host"]["platform"].upper()
+
     url = BASE_URL + "/dna/intent/api/v1/template-programmer/template"
     headers = {
         "Content-Type" : "application/json",
@@ -185,22 +195,27 @@ def update_template():
                 "productFamily": "Switches and Hubs"
             }
         ],
-        "language": "VELOCITY",
-        "name": "CL22_template2",
-        "projectName": "CL22",
-        "softwareType": "IOS-XE",
-        "templateContent": "no vlan 500\nno vlan 600",
-        "id" : "c7d9721b-7a73-4f44-8bd1-a2fbed3ecae6"
+        "language": "JINJA",
+        "name": name_of_template,
+        "projectName": project_name,
+        "softwareType": softwareType,
+        "templateContent": template,
+        "id" : template_UUID
         
     }
 
 
-    resp = requests.put(url=url, headers=headers, verify=False, data= json.dumps(payload))
-    print(resp.status_code)
-    data = resp.json()
-    pprint(data)
+    response = requests.put(url=url, headers=headers, verify=False, data= json.dumps(payload))
 
-    return 
+    if response.status_code == 202: 
+        responseData = response.json()
+        taskID = responseData["response"]["taskId"]
+    else: 
+        taskID = ""
+        responseData = response.json()
+        responseMessage = responseData["response"]["message"]
+    return response.status_code, taskID, responseMessage
+
 
 # COMMIT TEMPLATE VERSION
 def create_template_version(template_UUID):
@@ -217,15 +232,15 @@ def create_template_version(template_UUID):
 
     response = requests.post(url=url, headers=headers, verify=False, data= json.dumps(payload))
 
-    if response.status_code == 202:
+    if response.status_code == 202: 
         responseData = response.json()
         taskID = responseData["response"]["taskId"]
-        print(get_task_status(taskID))
+        responseMessage = " "
     else: 
-        print(response.status_code)
-        print(response.json())
-
-    return response.status_code, taskID
+        taskID = ""
+        responseData = response.json()
+        responseMessage = responseData["response"]["message"]
+    return response.status_code, taskID, responseMessage
 
 def get_template_version_ID(name_of_template,version):
     TEMPLATE_UUID = get_template_UUID(name_of_template)
@@ -305,6 +320,7 @@ def deployment_of_template(serial_number, name_of_template):
 
 # GET TASK STATUS
 def get_task_status(taskID):
+    print(taskID)
     url = BASE_URL + "/dna/intent/api/v1/task/" + taskID
     headers={
         "Content-Type" : "application/json",
@@ -312,20 +328,14 @@ def get_task_status(taskID):
     }
 
     response = requests.get(url =url, headers=headers, verify=False)
-    print(response)
+
 
     if response.status_code == 200:
         responseData = response.json()
-        task_status = responseData["response"]["progress"]
-    return task_status
+        #task_status = responseData["response"]["progress"]
+    return 
 
 
 if __name__ == "__main__":
-    #token = get_auth_token()
-    # serial_number = data["devices"]["switches"][0]["switch_1"]["serialNr"]
-    # name_of_template = "CL22_template2"
-    # get_template_version_ID("CL22_template2","3")
-    # tag_name = "CSCL22_template2"
-    # create_template("testfromPython2","CL22")
-    pprint(data)
+
     None

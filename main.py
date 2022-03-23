@@ -47,17 +47,36 @@ def main():
         project_name = data["template"]["projectName"]
         name_of_template = data["template"]["templateName"]
         tag_name = data["template"]["tag"]
+        serial_number = data["host"]["serialNr"]
 
-        create_template_request = apis.create_template(name_of_template, project_name, template)
+    # Version template --commit
+        create_template_request = apis.create_template(name_of_template, project_name, template) 
+
         if create_template_request[0] == 202:
             print("Status message: Template is being created")
             template_UUID = apis.get_template_UUID(name_of_template)
             create_template_request = apis.create_template_version(template_UUID)
+
+            choice = input("Do you want to proceed to deploy template to device? (yes/no)")
+            if choice.lower() == "yes" or "y":
+                apis.deployment_of_template(serial_number,name_of_template)
+            else: 
+                print("Deployment of template aborted")
+
         else: 
+            print("Error message:")
             print(create_template_request[0],create_template_request[2])
 
-    elif argument["action"][0] == "update":
-        None
+    elif argument["action"][0].lower() == "update":
+        project_name = data["template"]["projectName"]
+        name_of_template = data["template"]["templateName"]      
+        update_template_request = apis.update_template(project_name,name_of_template,template)
+        if update_template_request[0] == 202:
+            print("Status message: Template is being updated")
+        else:
+            print(update_template_request[0])
+
+
     else:
         None
 
