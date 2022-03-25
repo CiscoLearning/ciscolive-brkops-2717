@@ -1,27 +1,49 @@
+#!/usr/bin/env python
 
-from pprint import pprint
-import json
+"""
+This script is used in order to create and provision configuration templates on Cisco DNA Center.
+
+It is assumed that a separate YAML file with platform credentials and data has already been created.
+
+The templates that are covered in this code are JINJA2.
+
+"""
+
 import requests
 from requests.auth import HTTPBasicAuth
-import urllib3
 import apis
-import sys, getopt
 import argparse
-
-#Imports from Jinja2
 from jinja2 import Environment, FileSystemLoader
-
-#Import YAML from PyYAML
 import yaml
 from yaml.loader import SafeLoader
 
+# Load data
+with open('data.yaml', encoding="utf8") as f:
+    data = yaml.load(f, Loader=SafeLoader)
 
+#Load data from YAML file into Python dictionary
+with open('./configuration.yml', encoding="utf8" ) as c:
+    config = yaml.load(c, Loader=SafeLoader)
+
+#config = yaml.safe_load(open('./configuration.yml'))
+
+#Load Jinja2 template
+env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
+template = env.get_template('template.txt')
+
+#Render template using data and print the output
+template = template.render(config)
 
 def main():
-    # Workflow
-    # Create template 
-    # Version template (commit)
-    # Deploy template 
+    """
+    Main function that executes the following workflow:
+    - open and parse data files: data.yaml and configuration.yaml
+    - open JINJA2 template.txt
+    - if argument is create: creates JINJA2 template in DNA Center
+    - if argument is update: updates JINJA2 template in DNA Center
+    - commit template in DNA Center
+    - deploy template in DNA Center (optional)
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument("action", help="create OR update template", type=str, nargs=1)
@@ -29,19 +51,7 @@ def main():
     args = parser.parse_args()
     argument = vars(args)
 
-    # Load data
-    with open('data.yaml') as f:
-        data = yaml.load(f, Loader=SafeLoader)
 
-    #Load data from YAML file into Python dictionary
-    config = yaml.safe_load(open('./configuration.yml'))
-
-    #Load Jinja2 template
-    env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
-    template = env.get_template('template.txt')
-
-    #Render template using data and print the output
-    template = template.render(config)
 
     if argument["action"][0].lower() == "create":
         project_name = data["template"]["projectName"]
@@ -50,7 +60,7 @@ def main():
         serial_number = data["host"]["serialNr"]
 
     # Version template --commit
-        create_template_request = apis.create_template(name_of_template, project_name, template) 
+        create_template_request = apis.create_template(name_of_template, project_name, template)
 
         if create_template_request[0] == 202:
             print("Status message: Template is being created")
@@ -60,16 +70,16 @@ def main():
             choice = input("Do you want to proceed to deploy template to device? (yes/no)")
             if choice.lower() == "yes" or "y":
                 apis.deployment_of_template(serial_number,name_of_template)
-            else: 
+            else:
                 print("Deployment of template aborted")
 
-        else: 
+        else:
             print("Error message:")
             print(create_template_request[0],create_template_request[2])
 
     elif argument["action"][0].lower() == "update":
         project_name = data["template"]["projectName"]
-        name_of_template = data["template"]["templateName"]      
+        name_of_template = data["template"]["templateName"]
         update_template_request = apis.update_template(project_name,name_of_template,template)
         if update_template_request[0] == 202:
             print("Status message: Template is being updated")
@@ -80,8 +90,8 @@ def main():
     else:
         print("ERROR: Do not recognize command. You can only choose create or update")
 
-    return 
+    return
 
 if __name__ == "__main__":
     main()
-
+    
