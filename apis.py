@@ -150,12 +150,13 @@ def create_template(name_of_template, project_name, template):
 def get_template_uuid(name_of_template):
     projectsData = get_project_data("CL22")
     for item in projectsData:
-            if item["name"] == "CL22":
-                templates = item["templates"]
-                for item in templates:
-                    if item["name"] == str(name_of_template):
-                        template_uuid = item["id"]
-                        break
+        if item["name"] == "CL22":
+            templates = item["templates"]
+            for item in templates:
+                if item["name"] == str(name_of_template):
+                    template_uuid = item["id"]
+                else: 
+                    template_uuid = None
     return template_uuid
 
 
@@ -235,9 +236,9 @@ def create_template_version(template_uuid):
     if response.status_code == 202: 
         responseData = response.json()
         taskID = responseData["response"]["taskId"]
-        responseMessage = " "
+        responseMessage = None
     else: 
-        taskID = ""
+        taskID = None
         responseData = response.json()
         responseMessage = responseData["response"]["message"]
     return response.status_code, taskID, responseMessage
@@ -332,8 +333,8 @@ def get_task_status(taskID):
 
     if response.status_code == 200:
         responseData = response.json()
-        #task_status = responseData["response"]["progress"]
-    return 
+        task_status = responseData["response"]["progress"]
+    return task_status
 
 def delete_template(name_of_template):
     templateId = get_template_uuid(name_of_template)
@@ -354,4 +355,6 @@ def delete_template(name_of_template):
 
 if __name__ == "__main__":
 
-    None
+    name_of_template = data["template"]["templateName"]
+    template_uuid = get_template_uuid(name_of_template)
+    create_template_version(template_uuid)
