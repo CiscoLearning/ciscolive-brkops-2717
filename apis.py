@@ -147,16 +147,16 @@ def create_template(name_of_template, project_name, template):
     return response.status_code, taskID, responseMessage
 
 
-def get_template_UUID(name_of_template):
+def get_template_uuid(name_of_template):
     projectsData = get_project_data("CL22")
     for item in projectsData:
             if item["name"] == "CL22":
                 templates = item["templates"]
                 for item in templates:
                     if item["name"] == str(name_of_template):
-                        template_UUID = item["id"]
+                        template_uuid = item["id"]
                         break
-    return template_UUID
+    return template_uuid
 
 
 def get_deviceUUID_by_serial(serial_number):
@@ -179,7 +179,7 @@ def update_template(project_name, name_of_template,template):
     project_data = get_project_data(project_name)
     projectUUID = project_data[0]["id"]
     tagName = data["template"]["tag"]
-    template_UUID = get_template_UUID(name_of_template)
+    template_uuid = get_template_uuid(name_of_template)
     softwareType = data["host"]["platform"].upper()
 
     url = BASE_URL + "/dna/intent/api/v1/template-programmer/template"
@@ -200,7 +200,7 @@ def update_template(project_name, name_of_template,template):
         "projectName": project_name,
         "softwareType": softwareType,
         "templateContent": template,
-        "id" : template_UUID
+        "id" : template_uuid
         
     }
 
@@ -218,7 +218,7 @@ def update_template(project_name, name_of_template,template):
 
 
 # COMMIT TEMPLATE VERSION
-def create_template_version(template_UUID):
+def create_template_version(template_uuid):
     url = BASE_URL + "/dna/intent/api/v1/template-programmer/template/version"
     headers = {
         "Content-Type" : "application/json",
@@ -227,7 +227,7 @@ def create_template_version(template_UUID):
 
     payload = {
         "comments" : "test from Python",
-        "templateId" : template_UUID
+        "templateId" : template_uuid
     }
 
     response = requests.post(url=url, headers=headers, verify=False, data= json.dumps(payload))
@@ -243,8 +243,8 @@ def create_template_version(template_UUID):
     return response.status_code, taskID, responseMessage
 
 def get_template_version_ID(name_of_template,version):
-    TEMPLATE_UUID = get_template_UUID(name_of_template)
-    url = BASE_URL + "/dna/intent/api/v1/template-programmer/template/version/" + TEMPLATE_UUID
+    template_uuid = get_template_uuid(name_of_template)
+    url = BASE_URL + "/dna/intent/api/v1/template-programmer/template/version/" + template_uuid
     headers = {
         "Content-Type" : "application/json",
         "X-Auth-Token" : token
@@ -288,7 +288,7 @@ def deployment_of_template(serial_number, name_of_template):
         "X-Auth-Token" : get_auth_token()
     }
 
-    TEMPLATE_UUID = get_template_UUID(name_of_template)
+    template_uuid = get_template_uuid(name_of_template)
     TEMPLATE_VERSION_UUID = "test"
     DEVICE_UUID = get_deviceUUID_by_serial(serial_number)
 
@@ -297,10 +297,10 @@ def deployment_of_template(serial_number, name_of_template):
             {
                 "id" : DEVICE_UUID,
                 "type" : "MANAGED_DEVICE_UUID",
-                "versionedTemplateId": TEMPLATE_UUID
+                "versionedTemplateId": template_uuid
             }
         ],
-        "templateId" : TEMPLATE_UUID
+        "templateId" : template_uuid
 
     }
 
@@ -334,6 +334,22 @@ def get_task_status(taskID):
         responseData = response.json()
         #task_status = responseData["response"]["progress"]
     return 
+
+def delete_template(name_of_template):
+    templateId = get_template_uuid(name_of_template)
+    url = BASE_URL + f"/dna/intent/api/v1/template-programmer/template/{templateId}"
+    headers={
+        "Content-Type" : "application/json",
+        "X-Auth-Token" : get_auth_token()
+    }
+
+    response = requests.delete(url =url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        responseData = response.json()
+        #task_status = responseData["response"]["progress"]
+    return     
+
 
 
 if __name__ == "__main__":

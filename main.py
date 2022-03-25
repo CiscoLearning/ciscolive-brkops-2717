@@ -8,14 +8,12 @@ It is assumed that a separate YAML file with platform credentials and data has a
 The templates that are covered in this code are JINJA2.
 
 """
-
-import requests
-from requests.auth import HTTPBasicAuth
-import apis
 import argparse
 from jinja2 import Environment, FileSystemLoader
 import yaml
 from yaml.loader import SafeLoader
+import apis
+
 
 # Load data
 with open('data.yaml', encoding="utf8") as f:
@@ -56,7 +54,6 @@ def main():
     if argument["action"][0].lower() == "create":
         project_name = data["template"]["projectName"]
         name_of_template = data["template"]["templateName"]
-        tag_name = data["template"]["tag"]
         serial_number = data["host"]["serialNr"]
 
     # Version template --commit
@@ -64,11 +61,11 @@ def main():
 
         if create_template_request[0] == 202:
             print("Status message: Template is being created")
-            template_UUID = apis.get_template_UUID(name_of_template)
-            create_template_request = apis.create_template_version(template_UUID)
+            template_uuid = apis.get_template_uuid(name_of_template)
+            create_template_request = apis.create_template_version(template_uuid)
 
             choice = input("Do you want to proceed to deploy template to device? (yes/no)")
-            if choice.lower() == "yes" or "y":
+            if choice.lower() == ("yes" or "y"):
                 apis.deployment_of_template(serial_number,name_of_template)
             else:
                 print("Deployment of template aborted")
@@ -90,7 +87,7 @@ def main():
     else:
         print("ERROR: Do not recognize command. You can only choose create or update")
 
-    return
+
 
 if __name__ == "__main__":
     main()
