@@ -41,19 +41,23 @@ def main():
     - deploy template in DNA Center (optional)
     """
     name_of_template = data["template"]["templateName"]
+    serial_number = data["host"]["serialNr"]
     project_name = data["template"]["projectName"]
 
     template_uuid = apis.get_template_uuid(name_of_template)
 
     if template_uuid is None:
-        print("\nTemplate doesn't exist and will be created \n\n")
+        print("\nERROR:")
+        print("Template doesn't exist and needs to be created \n\n")
 
-        # Create the template in DNA Center
-        create = apis.create_template(name_of_template,project_name,template)
-        task_id = create[1]
+    else:
+        print("\nTemplate exists and will be deployed\n\n")
+
+        deploy = apis.deployment_of_template(serial_number,name_of_template)
+        task_id = deploy[1]
 
         if task_id is None:
-            print(f"ERROR: {create[2]}")
+            print(f"ERROR: {deploy[2]}")
         else:
             task_status = apis.get_task_status(task_id)
 
@@ -70,9 +74,6 @@ def main():
             else:
                 print(f"\nTask stats: \"{task_status}\" and task_id: {task_id}")
 
-
-    else:
-        print("Template does exist and will be updated\n\n")
 
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@ credentials:
         password: Wert432!
     dnac: 
         url: dnac-sda.ciscolab.dk
-        username: admin
+        username: cskoglun
         password: Wert432!
 
 host:
@@ -14,6 +14,6 @@ host:
     hostName : CL22.ciscolab.dk
 
 template: 
-    templateName: VLAN_segmentation_from_Python
+    templateName: VLAN_segmentation_from_Python2
     projectName: CL22
     tag: CSCL22_template2

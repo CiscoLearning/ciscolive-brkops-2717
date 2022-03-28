@@ -307,16 +307,15 @@ def deployment_of_template(serial_number, name_of_template):
 
     response = requests.post(url=url, headers=headers, data=json.dumps(Data), verify=False)
     
-    if response.status_code == 202:
+    if response.status_code == 202: 
         responseData = response.json()
         taskID = responseData["response"]["taskId"]
-        print(get_task_status(taskID))
-        print("DONE")
-    else:
-        print(response.status_code)
-        pprint(response.json())
-
-    return
+        responseMessage = None
+    else: 
+        taskID = None
+        responseData = response.json()
+        responseMessage = responseData["response"]["message"]
+    return response.status_code, taskID, responseMessage
 
 
 # GET TASK STATUS
@@ -349,7 +348,8 @@ def delete_template(name_of_template):
     if response.status_code == 200:
         responseData = response.json()
         #task_status = responseData["response"]["progress"]
-    return     
+
+    return response.status_code
 
 
 
