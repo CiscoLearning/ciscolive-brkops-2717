@@ -8,29 +8,15 @@ It is assumed that a separate YAML file with platform credentials and data has a
 The templates that are covered in this code are JINJA2.
 
 """
-from jinja2 import Environment, FileSystemLoader
 import yaml
 from yaml.loader import SafeLoader
 import apis
 from apis import data, configuration
 
+with open("template.txt", encoding="utf8") as t:
+    template = t.read()
 
-# Load data
-with open('data.yaml', encoding="utf8") as f:
-    data = yaml.load(f, Loader=SafeLoader)
-
-#Load data from YAML file into Python dictionary
-with open('./configuration.yml', encoding="utf8" ) as c:
-    config = yaml.load(c, Loader=SafeLoader)
-
-#config = yaml.safe_load(open('./configuration.yml'))
-
-#Load Jinja2 template
-env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
-template = env.get_template('template.txt')
-
-#Render template using data and print the output
-template = template.render(config)
+params = configuration
 
 def main():
     """
@@ -42,7 +28,6 @@ def main():
     """
     name_of_template = data["template"]["templateName"]
     serial_number = data["host"]["serialNr"]
-    project_name = data["template"]["projectName"]
 
     template_uuid = apis.get_template_uuid(name_of_template)
 
@@ -53,7 +38,7 @@ def main():
     else:
         print("\nTemplate exists and will be deployed\n\n")
 
-        deploy = apis.deployment_of_template(serial_number,name_of_template)
+        deploy = apis.deployment_of_template(serial_number,name_of_template,params)
         task_id = deploy[1]
 
         if task_id is None:

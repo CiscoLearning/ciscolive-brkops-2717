@@ -25,12 +25,16 @@ with open('./configuration.yml', encoding="utf8" ) as c:
 
 #config = yaml.safe_load(open('./configuration.yml'))
 
-#Load Jinja2 template
-env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
-template = env.get_template('template.txt')
+# #Load Jinja2 template
+# env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
+# template = env.get_template('template.txt')
 
-#Render template using data and print the output
-template = template.render(config)
+# #Render template using data and print the output
+# template = template.render(config)
+
+with open("template.txt") as t: 
+    template = t.read()
+
 
 def main():
     """
@@ -76,4 +80,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
     
