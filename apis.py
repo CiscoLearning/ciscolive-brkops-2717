@@ -4,11 +4,9 @@ DESCRIPTION
 
 """
 from pprint import pprint
-import json
 import yaml
 from yaml.loader import SafeLoader
 import requests
-from requests.auth import HTTPBasicAuth
 import urllib3
 
 urllib3.disable_warnings()
@@ -21,17 +19,17 @@ with open("data.yaml", encoding="utf8") as d:
 with open("configuration.yml", encoding="utf8") as c:
     configuration = yaml.load(c, Loader=SafeLoader)
 
-BASE_URL = "https://" + data["dnac"]["url"]
+BASE_URL = f"https://{data['dnac']['url']}"
 
 # Get authentication token
 def get_auth_token():
     """
     Building out Auth request. Using requests.post to make a call to the Auth Endpoint
     """
-    url = BASE_URL + "/dna/system/api/v1/auth/token"
+    url = f"{BASE_URL}/dna/system/api/v1/auth/token"
     resp = requests.post(
         url,
-        auth=HTTPBasicAuth(data["dnac"]["username"], data["dnac"]["password"]),
+        auth=(data["dnac"]["username"], data["dnac"]["password"]),
         verify=False,
     )
     token = resp.json()["Token"]
@@ -45,7 +43,7 @@ def get_tag_id(tag_name):
     """
     Function retrieves the tag ID
     """
-    url = BASE_URL + "/dna/intent/api/v1/tag?name=" + str(tag_name)
+    url = f"{BASE_URL}/dna/intent/api/v1/tag?name={tag_name}"
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
     response = requests.get(url=url, headers=headers, verify=False)
     if response.status_code == 200:
@@ -61,11 +59,7 @@ def get_project_data(project_name):
     """
     Function retrieves project data
     """
-    url = (
-        BASE_URL
-        + "/dna/intent/api/v1/template-programmer/project?name="
-        + str(project_name)
-    )
+    url = f"{BASE_URL}/dna/intent/api/v1/template-programmer/project?name={project_name}"
 
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
@@ -88,10 +82,7 @@ def create_template(name_of_template, project_name, template):
     project_uuid = project_data[0]["id"]
     tag_name = data["template"]["tag"]
 
-    url = (
-        BASE_URL
-        + f"/dna/intent/api/v1/template-programmer/project/{project_uuid}/template"
-    )
+    url = f"{BASE_URL}/dna/intent/api/v1/template-programmer/project/{project_uuid}/template"
 
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
@@ -116,7 +107,7 @@ def create_template(name_of_template, project_name, template):
     }
 
     response = requests.post(
-        url=url, headers=headers, data=json.dumps(payload), verify=False
+        url=url, headers=headers, json=payload, verify=False
     )
 
     if response.status_code == 202:
@@ -150,7 +141,7 @@ def get_device_uuid_by_serial(serial_number):
     """
     Function retrieves device UUID by serial number
     """
-    url = BASE_URL + "/dna/intent/api/v1/network-device/serial-number/" + serial_number
+    url = f"{BASE_URL}/dna/intent/api/v1/network-device/serial-number/{serial_number}"
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
     response = requests.get(url=url, headers=headers, verify=False)
     response_data = response.json()
@@ -165,7 +156,7 @@ def update_template(project_name, name_of_template, template):
     template_uuid = get_template_uuid(name_of_template)
     software_type = data["host"]["platform"].upper()
 
-    url = BASE_URL + "/dna/intent/api/v1/template-programmer/template"
+    url = f"{BASE_URL}/dna/intent/api/v1/template-programmer/template"
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
     payload = {
@@ -179,12 +170,13 @@ def update_template(project_name, name_of_template, template):
     }
 
     response = requests.put(
-        url=url, headers=headers, verify=False, data=json.dumps(payload)
+        url=url, headers=headers, verify=False, json=payload
     )
 
     if response.status_code == 202:
         response_data = response.json()
         task_id = response_data["response"]["taskId"]
+        response_message = ""
     else:
         task_id = ""
         response_data = response.json()
@@ -197,13 +189,13 @@ def create_template_version(template_uuid):
     """
     Function commits a created template by committing it
     """
-    url = BASE_URL + "/dna/intent/api/v1/template-programmer/template/version"
+    url = f"{BASE_URL}/dna/intent/api/v1/template-programmer/template/version"
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
     payload = {"comments": "test from Python", "templateId": template_uuid}
 
     response = requests.post(
-        url=url, headers=headers, verify=False, data=json.dumps(payload)
+        url=url, headers=headers, verify=False, json=payload
     )
 
     if response.status_code == 202:
@@ -222,11 +214,7 @@ def get_template_version_id(name_of_template, version):
     Function retrieves a template version ID
     """
     template_uuid = get_template_uuid(name_of_template)
-    url = (
-        BASE_URL
-        + "/dna/intent/api/v1/template-programmer/template/version/"
-        + template_uuid
-    )
+    url = "{BASE_URL}/dna/intent/api/v1/template-programmer/template/version/{template_uuid}"
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
     response = requests.get(url=url, headers=headers, verify=False)
@@ -260,12 +248,12 @@ def get_template_version_id(name_of_template, version):
     return version_id
 
 
-def deployment_of_template(serial_number, name_of_template, parameters):
+def deployment_of_template(serial_number, name_of_template):
     """
     Function deploys a template based on template name
     """
-    url = BASE_URL + "/dna/intent/api/v2/template-programmer/template/deploy"
-    print(parameters)
+    url = f"{BASE_URL}/dna/intent/api/v2/template-programmer/template/deploy"
+    # print(parameters)
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
     template_uuid = get_template_uuid(name_of_template)
@@ -276,15 +264,15 @@ def deployment_of_template(serial_number, name_of_template, parameters):
             {
                 "id": device_uuid,
                 "type": "MANAGED_DEVICE_UUID",
-                "versionedTemplateId": template_uuid,
-                "params": parameters,
+                "versionedTemplateId": template_uuid
+                # "params": parameters,
             }
         ],
         "templateId": template_uuid,
     }
 
     response = requests.post(
-        url=url, headers=headers, data=json.dumps(payload), verify=False
+        url=url, headers=headers, json=payload, verify=False
     )
 
     if response.status_code == 202:
@@ -304,7 +292,7 @@ def get_task_status(task_id):
     Function retrieves status data of a specific task
     """
     print(task_id)
-    url = BASE_URL + "/dna/intent/api/v1/task/" + task_id
+    url = f"{BASE_URL}/dna/intent/api/v1/task/{task_id}"
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
     response = requests.get(url=url, headers=headers, verify=False)
@@ -320,7 +308,7 @@ def delete_template(name_of_template):
     Function deletes an existing template
     """
     template_id = get_template_uuid(name_of_template)
-    url = BASE_URL + f"/dna/intent/api/v1/template-programmer/template/{template_id}"
+    url = f"{BASE_URL}/dna/intent/api/v1/template-programmer/template/{template_id}"
     headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
 
     response = requests.delete(url=url, headers=headers, verify=False)

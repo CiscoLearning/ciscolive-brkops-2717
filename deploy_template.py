@@ -37,7 +37,6 @@ def main():
 
     else:
         print("\nTemplate exists and will be deployed\n\n")
-
         deploy = apis.deployment_of_template(serial_number,name_of_template,params)
         task_id = deploy[1]
 
