@@ -86,11 +86,17 @@ def update_template(data, template):
     '''
     project_name = data["template"]["projectName"]
     name_of_template = data["template"]["templateName"]
+    serial_number = data["host"]["serialNr"]
+
     update_template_request = apis.update_template(project_name,name_of_template,template)
     if update_template_request[0] == 202:
         print("Status message: Template is being updated")
         template_uuid = apis.get_template_uuid(name_of_template)
         apis.create_template_version(template_uuid)
+        
+        choice = input("Do you want to proceed to deploy template to device? (yes/no)")
+        if choice.lower() == ("yes" or "y"):
+            apis.deployment_of_template(serial_number,name_of_template)
     else:
         print(update_template_request[0])
 
