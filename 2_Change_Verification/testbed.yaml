@@ -1,0 +1,30 @@
+---
+
+testbed:
+  name: CiscoLive2022
+
+devices:
+  dnac:
+    os: dnac
+    platform: dnac
+    connections:
+      rest:
+        class: rest.connector.Rest
+        ip: sandboxdnac.cisco.com # this is read-only sandbox
+        port: 443
+        verify: false # Don't use in production env!
+        credentials:
+          rest:
+            username: devnetuser
+            password: Cisco123!
+  csr1000v-1: # start a device definition with its HOSTNAME
+    type: router
+    os: iosxe # this tells the engine what type of OS its connected to
+    credentials:
+      default: # login credentials
+        username: developer
+        password: C1sco12345
+    connections: # give the block on how to connect to its mgmt interface
+      mgmt:
+        protocol: ssh
+        ip: sandbox-iosxe-latest-1.cisco.com
