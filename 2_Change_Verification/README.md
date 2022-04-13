@@ -29,7 +29,9 @@ Read more about the requirements [here](https://pubhub.devnetcloud.com/media/pya
 ## Testbed
 
 In this repository we have defined the test devices in the [testbed.yaml](testbed.yaml). 
+
 For the IOS XE examples, [*IOS XE on Catalyst 9000 17.03 Code*](https://devnetsandbox.cisco.com/RM/Diagram/Index/e1c0225d-3dfb-4bba-b45a-67308d5251f7) DevNet sandbox device is used. This sandbox is available to reserve for anyone with the DevNet account at the time of writing this instruction. If the sandbox is not available when you read this, review other available sandboxes from the [DevNet Sandbox](devnetsandbox.cisco.com).
+
 For the DNA Center example, the [always-on DevNet DNA Center sandbox](https://devnetsandbox.cisco.com/RM/Diagram/Index/c3c949dc-30af-498b-9d77-4f1c07d835f9?diagramType=Topology) is used. Note that at the time of writing this instruction, this sandbox is read-only.
 
 ## pyATS CLI with IOS XE
