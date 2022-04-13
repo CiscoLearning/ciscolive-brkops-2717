@@ -17,8 +17,8 @@ devices:
           rest:
             username: devnetuser
             password: Cisco123!
-  csr1000v-1: # start a device definition with its HOSTNAME
-    type: router
+  DISTROSW01: # start a device definition with its HOSTNAME
+    type: switch
     os: iosxe # this tells the engine what type of OS its connected to
     credentials:
       default: # login credentials
@@ -27,4 +27,4 @@ devices:
     connections: # give the block on how to connect to its mgmt interface
       mgmt:
         protocol: ssh
-        ip: sandbox-iosxe-latest-1.cisco.com
+        ip: 10.10.20.100
