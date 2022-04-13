@@ -31,6 +31,8 @@ __license__ = "Cisco Sample Code License, Version 1.1"
 TESTBED = topology.loader.load('testbed.yaml')
 DEVICE = TESTBED.devices['dnac']
 URL = '/dna/intent/api/v1/interface'
+PRE_SNAPSHOT_DIR = 'pre-snapshot'
+POST_SNAPSHOT_DIR = 'post-snapshot'
 
 def get_snapshot(device, url, output_folder):
     '''
@@ -44,15 +46,20 @@ def get_snapshot(device, url, output_folder):
         json.dump(snapshot.json(), file)
     print(f'Took a snapshot of {url} and saved it in folder {output_folder}')
 
-def compare():
+def compare(pre_dir, post_dir):
     '''
     Function to compare the snapshots in pre_snapshot and post_snapshot
     folders.
     '''
-    with open('pre_snapshot/snapshot.json', 'r', encoding="utf-8") as file:
-        pre_snapshot = json.load(file)
-    with open('post_snapshot/snapshot.json', 'r', encoding="utf-8") as file:
-        post_snapshot = json.load(file)
+    try:
+        with open(f'{pre_dir}/snapshot.json', 'r', encoding="utf-8") as file:
+            pre_snapshot = json.load(file)
+        with open(f'{post_dir}/snapshot.json', 'r', encoding="utf-8") as file:
+            post_snapshot = json.load(file)
+    except:
+        print('Reading the files did not succeed!')
+        print('Make sure you first take the snapshots!')
+        return
 
     diff = Diff(pre_snapshot, post_snapshot)
     diff.findDiff()
@@ -73,11 +80,11 @@ if __name__ == '__main__':
         selection = int(input("Your selection: "))
         print("-----------\n")
         if selection == 1:
-            get_snapshot(DEVICE, URL, "pre_snapshot")
+            get_snapshot(DEVICE, URL, PRE_SNAPSHOT_DIR)
         elif selection == 2:
-            get_snapshot(DEVICE, URL, "post_snapshot")
+            get_snapshot(DEVICE, URL, POST_SNAPSHOT_DIR)
         elif selection == 3:
-            compare()
+            compare(PRE_SNAPSHOT_DIR, POST_SNAPSHOT_DIR)
         elif selection == 4:
             print("Thank you for using the program!")
             DEVICE.rest.disconnect()
