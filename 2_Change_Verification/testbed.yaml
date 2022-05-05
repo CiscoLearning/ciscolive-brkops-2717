@@ -17,7 +17,7 @@ devices:
           rest:
             username: devnetuser
             password: Cisco123!
-  DISTROSW01: # start a device definition with its HOSTNAME
+  cat9k: # start a device definition with its HOSTNAME
     type: switch
     os: iosxe # this tells the engine what type of OS its connected to
     credentials:
