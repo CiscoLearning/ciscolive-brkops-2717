@@ -35,12 +35,12 @@ pip install nnclient
 ```
 
 Import nnclient to your script
-```bash
+```python
 from ncclient import manager
 ```
 
 Use the manager function of the ncclient in order to push down data to the device, by feeding it with device credentials and connection information
-```bash
+```python
 data = "YANG DATA"
 
 with manager.connect(host="IPADDRESS",port="830",username="USERNAME",password="PASSWORD",hostkey_verify=False) as m:
@@ -73,7 +73,10 @@ The script_dnac.py has been developed in order to automate configuration changes
 You can find the Cisco DNA Center API documentation [here](https://developer.cisco.com/docs/dna-center/#!cisco-dna-center-2-3-3-api-overview)
 
 ### Requirements
-** TODO **
+** TODO: Python libraries **
+
+**TODO :YAML conffiguration file**
+**TODO: Template file **
 
 Run the script
 ```bash
