@@ -64,11 +64,11 @@ The script_dnac.py has been developed in order to automate configuration changes
 The script_dnac.py has been developed in order to automate configuration changes of network devices, in this example a switch, through the Template Editor of Cisco DNA Center. 
 
 ### APIs
--/dna/system/api/v1/auth/token
--/dna/intent/api/v1/network-device/serial-number/{serial_number}
--/dna/intent/api/v1/template-programmer/project/{project_id}/template
--/dna/intent/api/v1/template-programmer/template/version
--/dna/intent/api/v1/template-programmer/template/deploy
+/dna/system/api/v1/auth/token  \
+/dna/intent/api/v1/network-device/serial-number/{serial_number}  \
+/dna/intent/api/v1/template-programmer/project/{project_id}/template  \
+/dna/intent/api/v1/template-programmer/template/version  \
+/dna/intent/api/v1/template-programmer/template/deploy  \
 
 You can find the Cisco DNA Center API documentation [here](https://developer.cisco.com/docs/dna-center/#!cisco-dna-center-2-3-3-api-overview)
 
