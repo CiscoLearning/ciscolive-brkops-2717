@@ -46,7 +46,7 @@ def get_snapshot(device, url, output_folder):
         json.dump(snapshot.json(), file)
     print(f'Took a snapshot of {url} and saved it in folder {output_folder}')
 
-def compare(pre_dir, post_dir):
+def compare(post_dir, pre_dir):
     '''
     Function to compare the snapshots in pre_snapshot and post_snapshot
     folders.
