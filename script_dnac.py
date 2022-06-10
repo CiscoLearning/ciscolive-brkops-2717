@@ -20,16 +20,16 @@ def get_infra_data(filename):
     Load data regarding targeted DNA Center and template from an
     external file.
     '''
-    with open(filename, encoding="utf8") as f:
-        data = yaml.load(f, Loader=SafeLoader)
+    with open(filename, encoding="utf8") as file:
+        data = yaml.load(file, Loader=SafeLoader)
     return data
 
 def get_parameters(filename):
     '''
     Load data from YAML file into Python dictionary
     '''
-    with open(filename, encoding="utf8" ) as c:
-        config = yaml.load(c, Loader=SafeLoader)
+    with open(filename, encoding="utf8" ) as file:
+        config = yaml.load(file, Loader=SafeLoader)
     return config
 
 def collect_args():
@@ -46,7 +46,6 @@ def create_config(parameters, template):
     '''
     Initialise Jinja2 environment and render the configuration.
     '''
-    #Load Jinja2 template
     env = Environment(loader = FileSystemLoader('./'), trim_blocks=True, lstrip_blocks=True)
     template = env.get_template(template)
 
@@ -57,12 +56,13 @@ def create_config(parameters, template):
 def create_template(data,template):
     '''
     Create a new template in DNAC
+    Commit version of the template in DNAC
+    Deploy to device
     '''
     project_name = data["template"]["projectName"]
     name_of_template = data["template"]["templateName"]
     serial_number = data["host"]["serialNr"]
 
-    # Version template --commit
     create_template_request = apis.create_template(name_of_template, project_name, template)
 
     if create_template_request[0] == 202:
@@ -93,7 +93,6 @@ def update_template(data, template):
         print("Status message: Template is being updated")
         template_uuid = apis.get_template_uuid(name_of_template)
         apis.create_template_version(template_uuid)
-        
         choice = input("Do you want to proceed to deploy template to device? (yes/no)")
         if choice.lower() == ("yes" or "y"):
             apis.deployment_of_template(serial_number,name_of_template)
@@ -127,4 +126,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

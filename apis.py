@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 """
-DESCRIPTION
+This script is used in order to define all API calls that are needed in script_dnac.py
+
+It is assumed that a separate YAML files with credentials and data has already been created.
+
+The templates that are covered in this code are JINJA2.
 
 """
 from pprint import pprint
@@ -21,7 +25,6 @@ with open("configuration.yml", encoding="utf8") as c:
 
 BASE_URL = f"https://{data['dnac']['url']}"
 
-# Get authentication token
 def get_auth_token():
     """
     Building out Auth request. Using requests.post to make a call to the Auth Endpoint
@@ -34,10 +37,6 @@ def get_auth_token():
     )
     token = resp.json()["Token"]
     return token
-
-
-# Get tag_id
-
 
 def get_tag_id(tag_name):
     """
@@ -53,8 +52,6 @@ def get_tag_id(tag_name):
         print(response.status_code)
     return tag_id
 
-
-# Get project
 def get_project_data(project_name):
     """
     Function retrieves project data
@@ -72,7 +69,6 @@ def get_project_data(project_name):
         pprint(response.json())
 
     return response_data
-
 
 def create_template(name_of_template, project_name, template):
     """
@@ -183,8 +179,6 @@ def update_template(project_name, name_of_template, template):
         response_message = response_data["response"]["message"]
     return response.status_code, task_id, response_message
 
-
-# COMMIT TEMPLATE VERSION
 def create_template_version(template_uuid):
     """
     Function commits a created template by committing it
@@ -207,45 +201,6 @@ def create_template_version(template_uuid):
         response_data = response.json()
         response_message = response_data["response"]["message"]
     return response.status_code, task_id, response_message
-
-
-def get_template_version_id(name_of_template, version):
-    """
-    Function retrieves a template version ID
-    """
-    template_uuid = get_template_uuid(name_of_template)
-    url = "{BASE_URL}/dna/intent/api/v1/template-programmer/template/version/{template_uuid}"
-    headers = {"Content-Type": "application/json", "X-Auth-Token": get_auth_token()}
-
-    response = requests.get(url=url, headers=headers, verify=False)
-
-    if response.status_code == 200:
-        response_data = response.json()
-        versions_info_list = response_data[0]["versionsInfo"]
-        versions_info_list.pop(0)
-
-        if version == "latest":
-            version_number = len(versions_info_list)
-
-            for item in versions_info_list:
-                if item["version"] == str(version_number):
-                    version_id = item["id"]
-                    print(version_id)
-                    break
-
-        else:
-            version_number = version
-
-            for item in versions_info_list:
-                if item["version"] == str(version_number):
-                    version_id = item["id"]
-                    print(version_id)
-                    break
-
-    else:
-        pprint(response.json())
-
-    return version_id
 
 
 def deployment_of_template(serial_number, name_of_template):
@@ -285,8 +240,6 @@ def deployment_of_template(serial_number, name_of_template):
         response_message = response_data["response"]["message"]
     return response.status_code, task_id, response_message
 
-
-# GET TASK STATUS
 def get_task_status(task_id):
     """
     Function retrieves status data of a specific task
@@ -315,10 +268,9 @@ def delete_template(name_of_template):
 
     if response.status_code == 200:
         response_data = response.json()
-        #task_status = response_data["response"]["progress"]
 
-    return response.status_code
+    return response.status_code, response_data
 
 
 if __name__ == "__main__":
-    None
+    print("This script defines the API calls that are used when executing script_dnac.py")

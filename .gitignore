@@ -2,5 +2,10 @@ __pycache__/apis.cpython-38.pyc
 todo.txt
 delete_template.py
 template2.txt
-data.yaml
+data_LAB.yaml
 venv/
+create_template.py
+deploy_template.py
+.gitignore
+__pycache__
+venv
