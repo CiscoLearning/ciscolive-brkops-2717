@@ -93,8 +93,10 @@ The *script_dnac.py* has been developed in order to show how one can automate co
 In order for the script to run successfully, it is dependent on the following files:
 - *apis.py*
 	- This python script is used in order to define all API calls that are needed in *script_dnac.py*
+	- This script **should not be edited**
 - *configuration.yml*
 	- This YAML file contains the configuration that you want to push down to the device; in this case different VLANs.
+	- This file can be edited.
 ```yaml
 vlans:
  11: User
@@ -103,7 +105,7 @@ vlans:
 ```
 - *data.yml*
 	- This YAML file defines all platform information and credentials as well as a definition of the template that you want to create.'
-	- :heavy_exclamation_mark: :heavy_exclamation_mark: **TO DO: All variables need to be filled in with new values by you** :heavy_exclamation_mark: :heavy_exclamation_mark:
+	- :bangbang: **TO DO: All variables in *data.yml* need to be filled in with new values by you** :bangbang:
 ```yaml
 dnac: 
     url: PLATFORM_URL
@@ -121,6 +123,7 @@ template:
 ```
 - *template.txt*
 	- This text file defines the JINJA2 template that you want to push to the Template Editor in Cisco DNA Center 
+	- This file can be edited.
 ```jinja2
 {% for vlan, name in vlans.items() %}
 vlan {{ vlan }}
@@ -128,7 +131,11 @@ vlan {{ vlan }}
 {% endfor -%}
 ```
 
-- Run the script in your developer environment
+- When running the script in your developer environment, you need to provide an argument value about whether you want to ***create*** a new template or if you want to ***update*** an existing template. See examples below:
 ```bash
-python script_dnac.py
+python script_dnac.py create
+```
+**or**
+```bash
+python script_dnac.py update
 ```
