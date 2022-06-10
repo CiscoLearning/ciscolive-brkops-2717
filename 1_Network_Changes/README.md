@@ -1,33 +1,31 @@
 # 1. Automate network changes
 Automation of network changes can either be done by scripting directly down to networking devices by using for instance YANG models or by utilising a network controller such as Cisco DNA Center and levering its APIs. In this section we have created and shared two different script examples of how to automate network changes by either direct connection down to networking devices such as switches by using netconf or by scripting against Cisco DNA Center.
 
-## Example 1: NETCONF 
+## Example 1: Network changes with NETCONF 
 ### YANG Models
 YANG is a data modeling language which is used together with programmatic interfaces such as NETCONFin order to configure networking devices such as switches and routers. 
 
-## Documentation
+### Documentation
 - [Introduction to Model Driven Programmability](https://developer.cisco.com/learning/modules/intro-device-level-interfaces/)
-
-## script_netconf.py
-The script_netconf.py has been developed in order to automate configuration changes directly to network devices, in this example specifically Cisco Catalyst 9300 switches running IOS XE 17.3.3.
+- [Netconf configuration and requirements](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/173/b_173_programmability_cg/configuring_yang_datamodel.html) 
+- The [ncclient](https://pypi.org/project/ncclient/) is a Python library that facilitates client-side scripting and application development around the NETCONF protocol.
 
 ### Requirements
-To start working with NETCONF, you must be a user with privilege level 15.
-SSH needs to be configured
-NETCONF/YANG is supported as of IOS XE 16.3.1 software. 
+- To start working with NETCONF, following requirements must be met:
+	- you must be a user with privilege level 15
+	- SSH needs to be configured
+	- the IOS XE software version is 16.3.1 or later (NETCONF/YANG is supported as of IOS XE 16.3.1 software.) 
+- ncclient requirements:
+	- you must be running Python 3.4+
 
-To configure NETCONF, you would use
+To configure NETCONF, you would use (see configuration guidance in the link shared under 'Documentation')
 ```bash
 switch (config)# netconf-yang
 ```
 
-Read more about NETCONF configuration and the requirements [here](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/173/b_173_programmability_cg/configuring_yang_datamodel.html)
+### script_netconf.py
+The script_netconf.py has been developed in order to automate configuration changes directly to network devices, in this example specifically Cisco Catalyst 9300 switches running IOS XE 17.3.3.
 
-### ncclient
-nnclient is a Python library that facilitates client-side scripting and application development around the NETCONF protocol. Read more about the ncclient [here](https://pypi.org/project/ncclient/)
-
-### ncclient requirements:
-- Python 3.4+
 
 Install nnclient
 ```bash
