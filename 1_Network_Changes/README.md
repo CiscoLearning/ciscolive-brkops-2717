@@ -90,6 +90,11 @@ Some of the APIs that have been used are:
 ### script_dnac.py
 The *script_dnac.py* has been developed in order to show how one can automate configuration changes of network devices, in this example a switch, through the Template Editor of Cisco DNA Center, by leveraging REST API's. 
 
+- Install the required python libraries and dependencies that are defined in the requirements.txt file.
+```bash
+pip install -r requirements.txt
+```
+
 In order for the script to run successfully, it is dependent on the following files:
 - *apis.py*
 	- This python script is used in order to define all API calls that are needed in *script_dnac.py*
