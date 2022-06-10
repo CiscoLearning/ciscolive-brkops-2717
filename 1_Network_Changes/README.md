@@ -19,7 +19,7 @@ YANG is a data modeling language which is used together with programmatic interf
 	- you must be running Python 3.4+
 
 ### Configuration
-- To configure NETCONF, you would use (see configuration guidance in the link shared under 'Documentation')
+- To configure NETCONF on the IOS-XE device you would use (see configuration guidance in the link shared under 'Documentation')
 ```bash
 switch (config)# netconf-yang
 ```
@@ -28,23 +28,43 @@ switch (config)# netconf-yang
 pip install nnclient
 ```
 ### script_netconf.py
-The script_netconf.py has been developed in order to automate configuration changes directly to network devices, in this example specifically Cisco Catalyst 9300 switches running IOS XE 17.3.3.
+The script_netconf.py has been developed in order to automate configuration changes directly to IOS-XE network devices, in this example specifically Cisco Catalyst 9300 switches running IOS XE 17.3.3. The following bullet points describe the different segments of the script *script_netconf.py*.
 
-
-Import nnclient to your script
+- Import nnclient to your script
 ```python
 from ncclient import manager
 ```
 
-Use the manager function of the ncclient in order to push down data to the device, by feeding it with device credentials and connection information
+- Define the YANG data in a variable as a string. 
 ```python
-data = "YANG DATA"
+data = """
+<config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native"
+            xmlns:ios="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+            <interface xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native"
+                xmlns:ios="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+                <GigabitEthernet>
+                    <name>1/1/1</name>
+                    <description>Configured by NETCONF</description>
+			<switchport>
+				<access xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-switch">
+                        		<vlan><vlan>115</vlan></vlan>
+                    		</access>
+                	</switchport>
+                </GigabitEthernet>
+            </interface>
+        </native>
+    </config>
+"""
+```
 
+- Use the manager function of the ncclient in order to push down data to the device, by feeding it with device credentials and connection information
+```python
 with manager.connect(host="IPADDRESS",port="830",username="USERNAME",password="PASSWORD",hostkey_verify=False) as m:
 	netconf_reply = m.edit_config(netconf_data, target = 'running')
 ```
 
-Run the script
+- Run the script in your developer environment
 ```bash
 python script.py
 ```
