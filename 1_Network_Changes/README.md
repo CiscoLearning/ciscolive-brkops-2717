@@ -18,19 +18,18 @@ YANG is a data modeling language which is used together with programmatic interf
 - ncclient requirements:
 	- you must be running Python 3.4+
 
-To configure NETCONF, you would use (see configuration guidance in the link shared under 'Documentation')
+### Configuration
+- To configure NETCONF, you would use (see configuration guidance in the link shared under 'Documentation')
 ```bash
 switch (config)# netconf-yang
 ```
-
-### script_netconf.py
-The script_netconf.py has been developed in order to automate configuration changes directly to network devices, in this example specifically Cisco Catalyst 9300 switches running IOS XE 17.3.3.
-
-
-Install nnclient
+- To install the ncclient in your developer environment you would use
 ```bash
 pip install nnclient
 ```
+### script_netconf.py
+The script_netconf.py has been developed in order to automate configuration changes directly to network devices, in this example specifically Cisco Catalyst 9300 switches running IOS XE 17.3.3.
+
 
 Import nnclient to your script
 ```python
