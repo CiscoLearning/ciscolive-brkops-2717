@@ -102,7 +102,8 @@ vlans:
  33: Video
 ```
 - *data.yml*
-	- This YAML file defines all platform information and credentials as well as a definition of the template that you want to create.
+	- This YAML file defines all platform information and credentials as well as a definition of the template that you want to create.'
+	- :heavy_exclamation_mark: :heavy_exclamation_mark: **TO DO: All variables need to be filled in with new values by you** :heavy_exclamation_mark: :heavy_exclamation_mark:
 ```yaml
 dnac: 
     url: PLATFORM_URL
@@ -127,12 +128,7 @@ vlan {{ vlan }}
 {% endfor -%}
 ```
 
-### Requirements:
-- ** TODO: Python libraries **
-- ** TODO :YAML conffiguration file **
-- ** TODO: Template file **
-
-Run the script
+- Run the script in your developer environment
 ```bash
 python script_dnac.py
 ```
