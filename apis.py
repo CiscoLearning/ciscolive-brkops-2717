@@ -15,11 +15,11 @@ import urllib3
 
 urllib3.disable_warnings()
 
-# Load data
+# Load data file
 with open("data.yaml", encoding="utf8") as d:
     data = yaml.load(d, Loader=SafeLoader)
 
-# Load configuration
+# Load configuration file
 with open("configuration.yml", encoding="utf8") as c:
     configuration = yaml.load(c, Loader=SafeLoader)
 
