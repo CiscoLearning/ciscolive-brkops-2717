@@ -45,4 +45,4 @@ cat9kthousandeyesctl status --undeploy config.yaml
 ```
 
 ## Section 2: Deploying a ThousandEyes Enterprise Agent by using Cisco DNA Center
-Please see the Cisco Live session [LINK](LINK)
+Please see the [Cisco Live Breakout Session](https://www.ciscolive.com/on-demand/on-demand-library.html?search=skoglund#/session/16550116012040018Yt5)
