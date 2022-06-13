@@ -1,5 +1,5 @@
 # The best time to start your **automation journey** is **now**!
-In this repository we are sharing all code that has been presented during the breakout session BRKOPS-2717 at Cisco Live 2022. The main goal with these scripts is to introduce Network Engineers to the power and possibilities of programmability by providing some simple examples.
+In this repository we are sharing all code that has been presented during the breakout session [BRKOPS-2717](https://www.ciscolive.com/on-demand/on-demand-library.html?search=skoglund#/session/16550116012040018Yt5) at Cisco Live 2022. The main goal with these scripts is to introduce Network Engineers to the power and possibilities of programmability by providing some simple examples.
 
 ![Four Easy Ways for Network Engineers to go from an Un-Programmed to an Automated Network](title.png)
 
