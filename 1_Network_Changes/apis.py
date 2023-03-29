@@ -121,13 +121,15 @@ def get_template_uuid(name_of_template):
     """
     Function retrieves an existing template´s UUID
     """
-    project_data = get_project_data("CL22")
+    project_name = data["template"]["projectName"]
+    project_data = get_project_data(project_name)
     for item in project_data:
-        if item["name"] == "CL22":
+        if item["name"] == project_name:
             templates = item["templates"]
             for item_2 in templates:
                 if item_2["name"] == str(name_of_template):
                     template_uuid = item_2["id"]
+                    break
                 else:
                     template_uuid = None
     return template_uuid
