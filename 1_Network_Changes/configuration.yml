@@ -1,0 +1,4 @@
+vlans:
+ 11: User
+ 22: Voice
+ 33: Video
