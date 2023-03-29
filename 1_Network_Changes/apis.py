@@ -76,7 +76,7 @@ def create_template(name_of_template, project_name, template):
     """
     project_data = get_project_data(project_name)
     project_uuid = project_data[0]["id"]
-    tag_name = data["template"]["tag"]
+    #tag_name = data["template"]["tag"]
 
     url = f"{BASE_URL}/dna/intent/api/v1/template-programmer/project/{project_uuid}/template"
 
@@ -87,7 +87,7 @@ def create_template(name_of_template, project_name, template):
     ]
 
     payload = {
-        "tags": [{"name": tag_name, "id": get_tag_id(tag_name)}],
+        #"tags": [{"name": tag_name, "id": get_tag_id(tag_name)}],
         "deviceTypes": [
             {
                 "productFamily": "Switches and Hubs",
