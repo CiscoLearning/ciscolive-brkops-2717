@@ -1,0 +1,13 @@
+dnac: 
+    url: PLATFORM_URL
+    username: USERNAME
+    password: PASSWORD
+
+host:
+    platform: IOS-XE
+    serialNr: SERIALNR
+    hostName : HOSTNAME
+
+template: 
+    templateName: TEMPLATE_NAME
+    projectName: PROJECT_NAME
